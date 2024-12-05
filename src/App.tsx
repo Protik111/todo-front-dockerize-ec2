@@ -79,7 +79,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-md">
+    <div className="container mx-auto p-4 max-w-md mt-10">
       <h1 className="text-3xl font-bold mb-4 text-red-900">Todo App</h1>
       <TodoForm onSubmit={addTodo} />
       <TodoList
