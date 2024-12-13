@@ -33,7 +33,10 @@ const App: React.FC = () => {
     }
   };
 
-  const updateTodo = async (id: string, status: string) => {
+  const updateTodo = async (
+    id: string | undefined,
+    status: string
+  ): Promise<void> => {
     setTodos(
       todos.map((todo) => (todo.id === id ? { ...todo, text: status } : todo))
     );
@@ -43,7 +46,10 @@ const App: React.FC = () => {
     });
   };
 
-  const toggleTodo = async (id: string, status: string) => {
+  const toggleTodo = async (
+    id: string | undefined,
+    status: string
+  ): Promise<void> => {
     const todo = await apiClient.patch(`/todo/${id}`, {
       status,
     });
@@ -63,7 +69,7 @@ const App: React.FC = () => {
     }
   };
 
-  const deleteTodo = async (id: string) => {
+  const deleteTodo = async (id: string | undefined): Promise<void> => {
     const todo = await apiClient.delete(`/todo/${id}`);
     if (todo?.data?.success) {
       setTodos(todos.filter((todo) => todo.id !== id));
