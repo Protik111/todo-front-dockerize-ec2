@@ -1,18 +1,11 @@
 import React, { useState } from "react";
-
-interface Todo {
-  id?: string;
-  title: string;
-  time: string;
-  status: string;
-  createdAt: Date;
-}
+import { Todo } from "../types";
 
 interface TodoItemProps {
   todo: Todo;
-  onToggle: (id: number) => void;
-  onUpdate: (id: number, newText: string) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: string | undefined, status: string) => void;
+  onUpdate: (id: string | undefined, newText: string) => void;
+  onDelete: (id: string | undefined) => void;
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({
@@ -22,10 +15,12 @@ const TodoItem: React.FC<TodoItemProps> = ({
   onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editText, setEditText] = useState(todo.text);
+  const [editText, setEditText] = useState(todo.title);
+
+  const isChecked = todo?.status === "completed";
 
   const handleUpdate = () => {
-    onUpdate(todo.id, editText);
+    onUpdate(todo.id, isChecked ? "uncompleted" : "completed");
     setIsEditing(false);
   };
 
@@ -33,8 +28,10 @@ const TodoItem: React.FC<TodoItemProps> = ({
     <li className="flex items-center space-x-2">
       <input
         type="checkbox"
-        checked={todo.completed}
-        onChange={() => onToggle(todo.id)}
+        checked={isChecked}
+        onChange={() =>
+          onToggle(todo.id, isChecked ? "uncompleted" : "completed")
+        }
         className="form-checkbox h-5 w-5 text-blue-600"
       />
       {isEditing ? (
@@ -50,7 +47,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       ) : (
         <span
           className={`flex-grow ${
-            todo.completed ? "line-through text-gray-500" : ""
+            isChecked ? "line-through text-gray-500" : ""
           }`}
           onDoubleClick={() => setIsEditing(true)}
         >

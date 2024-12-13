@@ -3,75 +3,71 @@ import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 import apiClient from "./lib/axios";
 import { Todo } from "./types";
-// import axios from 'axios';
 
 const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
 
-  useEffect(() => {
-    // Load todos from local storage
-    const storedTodos = localStorage.getItem("todos");
-    if (storedTodos) {
-      setTodos(JSON.parse(storedTodos));
+  const fetchTodos = async () => {
+    try {
+      const response = await apiClient.get("/todo");
+      setTodos(response.data?.data);
+    } catch (error) {
+      console.error("Error fetching todos:", error);
     }
+  };
 
-    // Commented out API call for future use
-    const fetchTodos = async () => {
-      try {
-        const response = await apiClient.get("/todo");
-        setTodos(response.data?.data);
-      } catch (error) {
-        console.error("Error fetching todos:", error);
-      }
-    };
+  useEffect(() => {
     fetchTodos();
   }, []);
-
-  useEffect(() => {
-    // Save todos to local storage whenever the todos state changes
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
 
   const addTodo = async (text: string) => {
     const newTodo: Todo = {
       title: text,
       time: new Date().toISOString().slice(0, 19),
     };
-    // setTodos([...todos, newTodo]);
 
     const todo = await apiClient.post("/todo", newTodo);
 
-    console.log("todo", todo);
+    if (todo?.data?.success) {
+      fetchTodos();
+    }
   };
 
-  const updateTodo = (id: number, newText: string) => {
+  const updateTodo = async (id: string, status: string) => {
     setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, text: newText } : todo))
+      todos.map((todo) => (todo.id === id ? { ...todo, text: status } : todo))
     );
 
-    // Commented out API call for future use
-    // axios.put(`https://api.example.com/todos/${id}`, { text: newText });
+    const todo = await apiClient.patch(`/todo/${id}`, {
+      status,
+    });
   };
 
-  const toggleTodo = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  const toggleTodo = async (id: string, status: string) => {
+    const todo = await apiClient.patch(`/todo/${id}`, {
+      status,
+    });
 
-    // Commented out API call for future use
-    // const todoToToggle = todos.find(todo => todo.id === id);
-    // if (todoToToggle) {
-    //   axios.put(`https://api.example.com/todos/${id}`, { completed: !todoToToggle.completed });
-    // }
+    if (todo?.data?.success) {
+      setTodos(
+        todos.map((todo) =>
+          todo.id === id
+            ? {
+                ...todo,
+                status:
+                  todo.status === "completed" ? "uncompleted" : "completed",
+              }
+            : todo
+        )
+      );
+    }
   };
 
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-
-    // Commented out API call for future use
-    // axios.delete(`https://api.example.com/todos/${id}`);
+  const deleteTodo = async (id: string) => {
+    const todo = await apiClient.delete(`/todo/${id}`);
+    if (todo?.data?.success) {
+      setTodos(todos.filter((todo) => todo.id !== id));
+    }
   };
 
   return (
