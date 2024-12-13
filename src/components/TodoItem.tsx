@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 
 interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
+  id?: string;
+  title: string;
+  time: string;
+  status: string;
+  createdAt: Date;
 }
 
 interface TodoItemProps {
@@ -52,7 +54,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
           }`}
           onDoubleClick={() => setIsEditing(true)}
         >
-          {todo.text}
+          {todo?.title}
         </span>
       )}
       <button
