@@ -1,0 +1,38 @@
+name: Deploy Frontend to EC2
+
+on:
+  workflow_run:
+    workflows: ['Publish Frontend Docker Image']
+    types: [completed]
+
+jobs:
+  deploy-frontend:
+    runs-on: [self-hosted, frontend]
+    steps:
+      - name: Check disk space
+        run: df -h
+      
+      - name: Stop and remove containers
+        run: docker compose down || true
+      
+      - name: Clean up Docker system
+        run: |
+          docker image prune -f
+          docker images | grep todo-front-dockerize-ec2 | awk '{print $3}' | xargs -r docker rmi -f || true
+          docker builder prune -f
+      
+      - name: Pull latest image
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/todo-front-dockerize-ec2:latest
+        timeout-minutes: 5
+      
+      - name: Start services
+        run: docker compose up -d
+      
+      - name: Wait for services
+        run: sleep 10
+      
+      - name: Check container status
+        run: docker compose ps
+      
+      - name: Show frontend logs
+        run: docker compose logs frontend --tail=30
