@@ -1,8 +1,3 @@
-# React + Vite
+# See The Guideline How to Deploy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[Deploying a Full-Stack App on AWS EC2 with Nginx Load Balancer (Frontend & Backend on Separate Instances)](https://medium.com/@rafiurrahmanprotik/deploying-a-full-stack-app-on-aws-ec2-with-nginx-load-balancer-frontend-backend-on-separate-afaf910bb106)
